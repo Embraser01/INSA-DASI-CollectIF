@@ -28,7 +28,8 @@ public class Demande implements Serializable {
     protected Demande() {
     }
 
-    public Demande(Date date, String moment, Activite activite) {
+    public Demande(Adherent adherent, Date date, String moment, Activite activite) {
+        this.adherent = adherent;
         this.wantedDate = date;
         this.moment = moment;
         this.activite = activite;
@@ -40,6 +41,14 @@ public class Demande implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Adherent getAdherent() {
+        return adherent;
+    }
+
+    public void setAdherent(Adherent adherent) {
+        this.adherent = adherent;
     }
 
     public Date getWantedDate() {
