@@ -1,10 +1,8 @@
 package fr.insalyon.dasi.collectif.job.model;
 
 import java.io.Serializable;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import java.util.List;
+import javax.persistence.*;
 
 @Entity
 public class Activite implements Serializable {
@@ -14,6 +12,12 @@ public class Activite implements Serializable {
     private String denomination;
     private Boolean payant;
     private Integer nbParticipants;
+
+    @OneToMany(mappedBy = "activite")
+    private List<Evenement> evenements;
+
+    @OneToMany(mappedBy = "activite")
+    private List<Demande> demandes;
 
     protected Activite() {
     }

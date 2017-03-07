@@ -1,6 +1,7 @@
 package fr.insalyon.dasi.collectif.job.model;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.*;
 
 @Entity
@@ -17,9 +18,11 @@ public class Adherent implements Serializable {
     private Double longitude;
     private Double latitude;
 
-    @OneToMany
+    @OneToMany(mappedBy = "adherent")
     private List<Demande> demandes;
 
+    @ManyToMany
+    private List<Evenement> evenements;
 
 
     protected Adherent() {

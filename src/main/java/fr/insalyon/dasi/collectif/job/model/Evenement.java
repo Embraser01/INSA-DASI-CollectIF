@@ -3,6 +3,7 @@ package fr.insalyon.dasi.collectif.job.model;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Inheritance( strategy = InheritanceType.JOINED)
@@ -11,8 +12,19 @@ public class Evenement implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private String id;
+
+    @Temporal(javax.persistence.TemporalType.DATE)
     private Date date;
     private String moment;
+
+    @ManyToMany(mappedBy = "evenements")
+    private List<Adherent> adherents;
+
+    @ManyToOne
+    private Activite activite;
+
+    @ManyToOne
+    private Lieu lieu;
 
     public Evenement(Date date, String moment) {
         this.date = date;

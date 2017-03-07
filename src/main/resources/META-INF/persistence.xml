@@ -4,8 +4,12 @@
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
     <class>fr.insalyon.dasi.collectif.job.model.Adherent</class>
     <class>fr.insalyon.dasi.collectif.job.model.Activite</class>
-    <class>fr.insalyon.dasi.collectif.job.model.Lieu</class>
     <class>fr.insalyon.dasi.collectif.job.model.Demande</class>
+    <class>fr.insalyon.dasi.collectif.job.model.Evenement</class>
+    <class>fr.insalyon.dasi.collectif.job.model.EvenementGratuit</class>
+    <class>fr.insalyon.dasi.collectif.job.model.EvenementPayant</class>
+    <class>fr.insalyon.dasi.collectif.job.model.Lieu</class>
+    <class>fr.insalyon.dasi.collectif.job.model.Responsable</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:derby://localhost:1527/CollectIF"/>
       <property name="javax.persistence.jdbc.password" value="root"/>

@@ -15,7 +15,7 @@ public class Lieu implements Serializable {
     private Double longitude;
     private Double latitude;
 
-    @OneToMany
+    @OneToMany(mappedBy = "lieu")
     private List<Evenement> evenements;
 
     protected Lieu() {

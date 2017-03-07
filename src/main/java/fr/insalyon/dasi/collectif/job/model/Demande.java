@@ -20,7 +20,10 @@ public class Demande implements Serializable {
     private String moment;
     
     @ManyToOne
-    private Activite activite; 
+    private Activite activite;
+
+    @ManyToOne
+    private Adherent adherent;
 
     protected Demande() {
     }
