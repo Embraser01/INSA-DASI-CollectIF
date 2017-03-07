@@ -5,6 +5,7 @@
     <class>fr.insalyon.dasi.collectif.job.model.Adherent</class>
     <class>fr.insalyon.dasi.collectif.job.model.Activite</class>
     <class>fr.insalyon.dasi.collectif.job.model.Lieu</class>
+    <class>fr.insalyon.dasi.collectif.job.model.Demande</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:derby://localhost:1527/CollectIF"/>
       <property name="javax.persistence.jdbc.password" value="root"/>

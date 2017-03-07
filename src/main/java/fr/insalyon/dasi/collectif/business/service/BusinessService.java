@@ -5,8 +5,14 @@
  */
 package fr.insalyon.dasi.collectif.business.service;
 
+import fr.insalyon.dasi.collectif.dao.ActiviteDAO;
 import fr.insalyon.dasi.collectif.dao.AdherentDAO;
+import fr.insalyon.dasi.collectif.dao.DemandeDAO;
+import fr.insalyon.dasi.collectif.job.model.Activite;
 import fr.insalyon.dasi.collectif.job.model.Adherent;
+import fr.insalyon.dasi.collectif.job.model.Demande;
+import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -14,6 +20,8 @@ import fr.insalyon.dasi.collectif.job.model.Adherent;
  */
 public class BusinessService {
     private AdherentDAO adherentDAO = new AdherentDAO();
+    private DemandeDAO demandeDAO = new DemandeDAO();
+    private ActiviteDAO activiteDAO = new ActiviteDAO();
     
     public boolean authSignup(String name,
                               String firstname, 
@@ -54,11 +62,32 @@ public class BusinessService {
     }
     
     public boolean posterDemande(String activite, Date date, String moment) {
-        return false;
+        try {
+            Activite activiteObj = activiteDAO.findByDenomination(activite);
+            
+            if (activiteObj == null) {
+                return false;
+            }
+            
+            if (demandeDAO.find(date, moment, activiteObj) != null) {
+                return false;
+            }
+        
+            demandeDAO.add(new Demande(date, moment, activiteObj));
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
     
     public List<Demande> consulterHistorique() {
-        
+        try {
+            return demandeDAO.findAll();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
     
     public List<Evenement> consulterEvenements() {

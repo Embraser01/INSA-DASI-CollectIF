@@ -19,6 +19,23 @@ public class ActiviteDAO {
         return activite;
     }
     
+    public Activite findByDenomination(String denomination) throws Exception {
+        EntityManager em = JpaUtil.obtenirEntityManager();
+        try {
+            Query jpqlQuery = em.createQuery("SELECT a FROM Activite a WHERE a.denomination = :denomination");
+            List results = jpqlQuery.setParameter("denomination", denomination).getResultList();
+            
+            if (results.isEmpty()) {
+                return null;
+            }
+            
+            return (Activite)results.get(0);
+        }
+        catch(Exception e) {
+            throw e;
+        }
+    }
+    
     public List<Activite> findAll() throws Exception {
         EntityManager em = JpaUtil.obtenirEntityManager();
         List<Activite> activites = null;
