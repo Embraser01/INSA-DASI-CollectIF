@@ -1,12 +1,10 @@
 package fr.insalyon.dasi.collectif.job.model;
 
 import java.io.Serializable;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
+@Inheritance( strategy = InheritanceType.SINGLE_TABLE)
 public class Adherent implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -18,6 +16,11 @@ public class Adherent implements Serializable {
     private String password;
     private Double longitude;
     private Double latitude;
+
+    @OneToMany
+    private List<Demande> demandes;
+
+
 
     protected Adherent() {
     }

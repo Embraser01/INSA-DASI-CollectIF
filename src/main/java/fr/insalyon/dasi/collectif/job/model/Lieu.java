@@ -1,10 +1,8 @@
 package fr.insalyon.dasi.collectif.job.model;
 
 import java.io.Serializable;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import java.util.List;
+import javax.persistence.*;
 
 @Entity
 public class Lieu implements Serializable {
@@ -16,6 +14,9 @@ public class Lieu implements Serializable {
     private String adresse;
     private Double longitude;
     private Double latitude;
+
+    @OneToMany
+    private List<Evenement> evenements;
 
     protected Lieu() {
     }
