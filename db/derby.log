@@ -16,3 +16,16 @@ Chargeur de classe de la base de données démarré - derby.database.classpath=''
 Tue Mar 07 14:27:10 CET 2017:
 Fermeture de l'instance a816c00e-015a-a8f2-c89e-ffff89349e4e sur le répertoire de base de données L:\Documents\TPDASI\CollectIF\db\CollectIF avec le chargeur de classe sun.misc.Launcher$AppClassLoader@2d4b1fda
 Tue Mar 07 14:27:11 CET 2017 Thread[DRDAConnThread_3,5,main] (DATABASE = CollectIF), (DRDAID = {2}), Arrêt de la base de données 'CollectIF'.
+----------------------------------------------------------------
+Tue Mar 07 14:58:54 CET 2017:
+Amorçage de Derby version The Apache Software Foundation - Apache Derby - 10.8.3.2 - (1557835) : instance 6c44409f-015a-a8f2-c89e-ffff89349e4e 
+dans le répertoire de base de données L:\Documents\TPDASI\CollectIF\db\CollectIF  avec le chargeur de classe sun.misc.Launcher$AppClassLoader@2d4b1fda
+
+java.vendor=Oracle Corporation
+java.runtime.version=1.7.0_71-b14
+user.dir=C:\Program Files\Java\jdk1.7.0_71\db
+os.name=Windows 7
+os.arch=amd64
+os.version=6.1
+derby.system.home=L:\Documents\TPDASI\CollectIF\db
+Chargeur de classe de la base de données démarré - derby.database.classpath=''

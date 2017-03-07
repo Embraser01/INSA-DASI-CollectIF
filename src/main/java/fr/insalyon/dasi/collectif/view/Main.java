@@ -5,8 +5,10 @@
  */
 package fr.insalyon.dasi.collectif.view;
 
+import fr.insalyon.dasi.collectif.dao.ActiviteDAO;
 import fr.insalyon.dasi.collectif.dao.AdherentDAO;
 import fr.insalyon.dasi.collectif.dao.JpaUtil;
+import fr.insalyon.dasi.collectif.dao.LieuDAO;
 import fr.insalyon.dasi.collectif.job.model.Adherent;
 import java.util.Arrays;
 
@@ -21,12 +23,13 @@ public class Main {
         JpaUtil.creerEntityManager();
     
         AdherentDAO adherentDAO = new AdherentDAO();
-        Adherent adherent = new Adherent("Bourvon", "Tristan", "tristan.bourvon@insa-lyon.fr", "blablabla");
+        ActiviteDAO activiteDAO = new ActiviteDAO();
+        LieuDAO lieuDAO = new LieuDAO();
         
         try {
-            adherentDAO.add(adherent);
-
             System.out.println(adherentDAO.findAll());
+            System.out.println(activiteDAO.findAll());
+            System.out.println(lieuDAO.findAll());
         } catch (Exception e) {
             System.out.println(Arrays.toString(e.getStackTrace()));
         }
