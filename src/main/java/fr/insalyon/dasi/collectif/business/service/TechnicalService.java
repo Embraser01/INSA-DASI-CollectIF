@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fr.insalyon.dasi.collectif.job.service;
+package fr.insalyon.dasi.collectif.business.service;
 
 /**
  *
  * @author tbourvon
  */
-public class JobService {
+public class TechnicalService {
     
 }

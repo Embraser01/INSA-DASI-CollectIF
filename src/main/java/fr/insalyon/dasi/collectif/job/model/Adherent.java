@@ -15,17 +15,19 @@ public class Adherent implements Serializable {
     private String prenom;
     private String mail;
     private String adresse;
+    private String password;
     private Double longitude;
     private Double latitude;
 
     protected Adherent() {
     }
     
-    public Adherent(String nom, String prenom, String mail, String adresse) {
+    public Adherent(String nom, String prenom, String mail, String adresse, String password) {
         this.nom = nom;
         this.prenom = prenom;
         this.mail = mail;
         this.adresse = adresse;
+        this.password = password;
         this.longitude = null;
         this.latitude = null;
     }
@@ -74,6 +76,15 @@ public class Adherent implements Serializable {
         this.adresse = adresse;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+    
+
     public void setLatitudeLongitude(Double latitude, Double longitude) {
         this.latitude = latitude;
         this.longitude = longitude;
@@ -81,7 +92,7 @@ public class Adherent implements Serializable {
 
     @Override
     public String toString() {
-        return "Adherent{" + "id=" + id + ", nom=" + nom + ", prenom=" + prenom + ", mail=" + mail + ", adresse=" + adresse + ", longitude=" + longitude + ", latitude=" + latitude + '}';
+        return "Adherent{" + "id=" + id + ", nom=" + nom + ", prenom=" + prenom + ", mail=" + mail + ", adresse=" + adresse + ", password=" + password + ", longitude=" + longitude + ", latitude=" + latitude + '}';
     }
 
 }
