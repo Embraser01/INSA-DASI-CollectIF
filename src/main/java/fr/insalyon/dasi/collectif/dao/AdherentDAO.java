@@ -32,4 +32,16 @@ public class AdherentDAO {
         
         return adherents;
     }
+    
+    public void add(Adherent adherent) throws Exception {
+        EntityManager em = JpaUtil.obtenirEntityManager();
+        
+        JpaUtil.ouvrirTransaction();
+        try {
+            em.persist(adherent);
+            JpaUtil.validerTransaction();
+        } catch(Exception e) {
+            throw e;
+        }
+    }
 }
