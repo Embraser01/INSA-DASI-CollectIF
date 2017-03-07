@@ -12,6 +12,7 @@ import fr.insalyon.dasi.collectif.job.model.Activite;
 import fr.insalyon.dasi.collectif.job.model.Adherent;
 import fr.insalyon.dasi.collectif.job.model.Demande;
 import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -81,7 +82,12 @@ public class BusinessService {
     }
     
     public List<Demande> consulterHistorique() {
-        
+        try {
+            return demandeDAO.findAll();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
     
     public List<Evenement> consulterEvenements() {
