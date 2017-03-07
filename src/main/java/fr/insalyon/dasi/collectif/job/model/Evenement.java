@@ -7,7 +7,7 @@ import java.util.List;
 
 @Entity
 @Inheritance( strategy = InheritanceType.JOINED)
-public class Evenement implements Serializable {
+public abstract class Evenement implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -26,7 +26,7 @@ public class Evenement implements Serializable {
     @ManyToOne
     private Lieu lieu;
 
-    public Evenement(Date date, String moment) {
+    protected Evenement(Date date, String moment) {
         this.date = date;
         this.moment = moment;
     }
