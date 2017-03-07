@@ -22,7 +22,7 @@ public class Main {
         
         JpaUtil.creerEntityManager();
     
-        
+        AdherentDAO adherentDAO = new AdherentDAO();
         ActiviteDAO activiteDAO = new ActiviteDAO();
         LieuDAO lieuDAO = new LieuDAO();
         
