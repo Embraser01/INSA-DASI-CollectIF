@@ -15,17 +15,21 @@ public class Demande implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     
+    @ManyToOne
+    private Adherent adherent;
+    
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date wantedDate;
     private String moment;
     
     @ManyToOne
-    private Activite activite; 
+    private Activite activite;
 
     protected Demande() {
     }
 
-    public Demande(Date date, String moment, Activite activite) {
+    public Demande(Adherent adherent, Date date, String moment, Activite activite) {
+        this.adherent = adherent;
         this.wantedDate = date;
         this.moment = moment;
         this.activite = activite;
@@ -39,6 +43,14 @@ public class Demande implements Serializable {
         this.id = id;
     }
 
+    public Adherent getAdherent() {
+        return adherent;
+    }
+
+    public void setAdherent(Adherent adherent) {
+        this.adherent = adherent;
+    }
+    
     public Date getWantedDate() {
         return wantedDate;
     }

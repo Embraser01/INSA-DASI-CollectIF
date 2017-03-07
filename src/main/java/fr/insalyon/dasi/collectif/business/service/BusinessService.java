@@ -41,39 +41,34 @@ public class BusinessService {
         }
     }
     
-    public boolean authLogin(String email, String password) {
+    public Adherent authLogin(String email, String password) {
         Adherent adherent = null;
         try {
             adherent = adherentDAO.findByEmail(email);
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
+            return null;
         }
         
         if (adherent == null) {
-            return false;
+            return null;
         }
         
         if (!adherent.getPassword().equals(password)) {
-            return false;
+            return null;
         }
         
-        return true;
+        return adherent;
     }
     
-    public boolean posterDemande(String activite, Date date, String moment) {
+    public boolean posterDemande(Adherent adherent, Activite activite, Date date, String moment) {
         try {
-            Activite activiteObj = activiteDAO.findByDenomination(activite);
             
-            if (activiteObj == null) {
-                return false;
-            }
-            
-            if (demandeDAO.find(date, moment, activiteObj) != null) {
+            if (demandeDAO.find(adherent, date, moment, activite) != null) {
                 return false;
             }
         
-            demandeDAO.add(new Demande(date, moment, activiteObj));
+            demandeDAO.add(new Demande(adherent, date, moment, activite));
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -81,7 +76,7 @@ public class BusinessService {
         }
     }
     
-    public List<Demande> consulterHistorique() {
+    public List<Demande> consulterHistorique(Adherent adherent) {
         try {
             return demandeDAO.findAll();
         } catch (Exception e) {
@@ -93,11 +88,7 @@ public class BusinessService {
     public List<Evenement> consulterEvenements() {
         
     }
-    
-    public List<Geo> localiserParticipants() {
-        
-    }
-    
+
     public boolean completerEvenement() {
         
     }

@@ -1,6 +1,7 @@
 package fr.insalyon.dasi.collectif.dao;
 
 import fr.insalyon.dasi.collectif.job.model.Activite;
+import fr.insalyon.dasi.collectif.job.model.Adherent;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -21,11 +22,12 @@ public class DemandeDAO {
         return demande;
     }
     
-    public Demande find(Date date, String moment, Activite activite) throws Exception {
+    public Demande find(Adherent adherent, Date date, String moment, Activite activite) throws Exception {
         EntityManager em = JpaUtil.obtenirEntityManager();
         
-        Query jpqlQuery = em.createQuery("SELECT d FROM Demande d WHERE d.wantedDate = :wantedDate AND d.moment = :moment AND d.activite = :activite");
-        List results = jpqlQuery.setParameter("wantedDate", date)
+        Query jpqlQuery = em.createQuery("SELECT d FROM Demande d WHERE d.adherent = :adherent AND d.wantedDate = :wantedDate AND d.moment = :moment AND d.activite = :activite");
+        List results = jpqlQuery.setParameter("adherent", adherent)
+                                .setParameter("wantedDate", date)
                                 .setParameter("moment", moment)
                                 .setParameter("activite", activite)
                                 .getResultList();
