@@ -1,11 +1,11 @@
 package fr.insalyon.dasi.collectif.dao;
 
-import fr.insalyon.dasi.collectif.job.model.Activite;
-import fr.insalyon.dasi.collectif.job.model.Adherent;
+import fr.insalyon.dasi.collectif.business.model.Activite;
+import fr.insalyon.dasi.collectif.business.model.Adherent;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import fr.insalyon.dasi.collectif.job.model.Demande;
+import fr.insalyon.dasi.collectif.business.model.Demande;
 import java.util.Date;
 
 public class DemandeDAO {

@@ -8,9 +8,14 @@ package fr.insalyon.dasi.collectif.business.service;
 import fr.insalyon.dasi.collectif.dao.ActiviteDAO;
 import fr.insalyon.dasi.collectif.dao.AdherentDAO;
 import fr.insalyon.dasi.collectif.dao.DemandeDAO;
-import fr.insalyon.dasi.collectif.job.model.Activite;
-import fr.insalyon.dasi.collectif.job.model.Adherent;
-import fr.insalyon.dasi.collectif.job.model.Demande;
+import fr.insalyon.dasi.collectif.dao.EvenementDAO;
+import fr.insalyon.dasi.collectif.business.model.Activite;
+import fr.insalyon.dasi.collectif.business.model.Adherent;
+import fr.insalyon.dasi.collectif.business.model.Demande;
+import fr.insalyon.dasi.collectif.business.model.Evenement;
+import fr.insalyon.dasi.collectif.business.model.EvenementGratuit;
+import fr.insalyon.dasi.collectif.business.model.EvenementPayant;
+import fr.insalyon.dasi.collectif.business.model.Lieu;
 import java.util.Date;
 import java.util.List;
 
@@ -22,6 +27,7 @@ public class BusinessService {
     private AdherentDAO adherentDAO = new AdherentDAO();
     private DemandeDAO demandeDAO = new DemandeDAO();
     private ActiviteDAO activiteDAO = new ActiviteDAO();
+    private EvenementDAO evenementDAO = new ActiviteDAO();
     
     public boolean authSignup(String name,
                               String firstname, 
@@ -86,10 +92,21 @@ public class BusinessService {
     }
     
     public List<Evenement> consulterEvenements() {
-        
+        try {
+            return evenementDAO.findAll();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
-    public boolean completerEvenement() {
-        
+    public boolean completerEvenement(Evenement evenement) {
+        try {
+            evenementDAO.update(evenement);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

@@ -1,4 +1,4 @@
-package fr.insalyon.dasi.collectif.job.model;
+package fr.insalyon.dasi.collectif.business.model;
 
 import java.io.Serializable;
 import java.util.List;

@@ -9,7 +9,7 @@ import fr.insalyon.dasi.collectif.dao.ActiviteDAO;
 import fr.insalyon.dasi.collectif.dao.AdherentDAO;
 import fr.insalyon.dasi.collectif.dao.JpaUtil;
 import fr.insalyon.dasi.collectif.dao.LieuDAO;
-import fr.insalyon.dasi.collectif.job.model.Adherent;
+import fr.insalyon.dasi.collectif.business.model.Adherent;
 import java.util.Arrays;
 
 /**

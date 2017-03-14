@@ -1,4 +1,4 @@
-package fr.insalyon.dasi.collectif.job.model;
+package fr.insalyon.dasi.collectif.business.model;
 
 
 import javax.persistence.Entity;

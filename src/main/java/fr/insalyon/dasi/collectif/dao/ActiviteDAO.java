@@ -3,7 +3,7 @@ package fr.insalyon.dasi.collectif.dao;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import fr.insalyon.dasi.collectif.job.model.Activite;
+import fr.insalyon.dasi.collectif.business.model.Activite;
 
 public class ActiviteDAO {
     
