@@ -11,7 +11,7 @@ public abstract class Evenement implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private String id;
+    private Long id;
 
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date eventDate;
@@ -34,7 +34,7 @@ public abstract class Evenement implements Serializable {
     public Evenement() {
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
@@ -54,7 +54,31 @@ public abstract class Evenement implements Serializable {
         this.moment = moment;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
+    }
+
+    public List<Adherent> getAdherents() {
+        return adherents;
+    }
+
+    public void setAdherents(List<Adherent> adherents) {
+        this.adherents = adherents;
+    }
+
+    public Activite getActivite() {
+        return activite;
+    }
+
+    public void setActivite(Activite activite) {
+        this.activite = activite;
+    }
+
+    public Lieu getLieu() {
+        return lieu;
+    }
+
+    public void setLieu(Lieu lieu) {
+        this.lieu = lieu;
     }
 }

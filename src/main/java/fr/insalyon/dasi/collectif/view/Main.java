@@ -5,16 +5,12 @@
  */
 package fr.insalyon.dasi.collectif.view;
 
-import fr.insalyon.dasi.collectif.business.model.Adherent;
-import fr.insalyon.dasi.collectif.business.model.Demande;
-import fr.insalyon.dasi.collectif.business.model.Evenement;
-import fr.insalyon.dasi.collectif.business.model.Responsable;
+import fr.insalyon.dasi.collectif.business.model.*;
 import fr.insalyon.dasi.collectif.business.service.BusinessService;
 import fr.insalyon.dasi.collectif.dao.JpaUtil;
+import fr.insalyon.dasi.collectif.util.Saisie;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * @author tbourvon
@@ -29,6 +25,7 @@ public class Main {
 
         // View start
         int menuSelection;
+        Scanner input = new Scanner(System.in);
 
         // Connexion de l'utilisateur
 
@@ -41,7 +38,6 @@ public class Main {
 
                     String password;
                     String email;
-                    Scanner input = new Scanner(System.in);
 
                     System.out.println("Entrez votre nom :");
                     email = input.nextLine();
@@ -72,47 +68,149 @@ public class Main {
 
         if (currentUser instanceof Responsable) {
             // TODO Responsable
-            menuSelection = menuResponsable();
-            switch (menuSelection) {
-                case 1:
-                    List<Evenement> evenements = businessService.consulterEvenements();
+            List<Evenement> evenements;
+            Evenement ev;
 
-                    for (Evenement ev :
-                            evenements) {
-                        System.out.println(ev);
-                    }
+            while (currentUser != null) {
+                menuSelection = menuResponsable();
+                switch (menuSelection) {
+                    case 1:
+                        evenements = businessService.consulterEvenements();
 
-                    break;
-                case 2:
-                    break;
-                case 3:
-                    stop();
-                    return;
-                default:
-                    break;
+                        System.out.println("Liste des évènements :");
+                        for (Evenement evenement :
+                                evenements) {
+                            System.out.println(evenement);
+                        }
+                        System.out.println("---FIN---");
+
+                        break;
+                    case 2:
+                        System.out.println("ID de l'évènement à compléter :");
+
+                        long wantedID = input.nextLong();
+                        ev = null;
+                        evenements = businessService.consulterEvenements();
+
+                        for (Evenement evenement :
+                                evenements) {
+                            if (evenement.getId() == wantedID) {
+                                ev = evenement;
+                                break;
+                            }
+                        }
+
+                        if (ev != null) {
+
+                            System.out.println("Id : " + ev.getId());
+                            System.out.println("Activité le : " + ev.getEventDate() + " - " + ev.getMoment());
+                            System.out.println("Activité : " + ev.getActivite().getDenomination());
+                            System.out.println("-------------- A remplir :");
+
+                            // TODO Catalogue de lieu
+                            List<String> lieux = new ArrayList<>();
+
+                            boolean found = false;
+
+                            while (!found) {
+                                System.out.println("Lieu :");
+                                String lieu = input.nextLine();
+
+                                for (String lieu1 : lieux) {
+                                    if (lieu1.equals(lieu)) {
+                                        found = true;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            if (ev.getActivite().getPayant()) {
+                                System.out.println("PAF :");
+                                ((EvenementPayant) ev).setPaf(input.nextInt());
+                            }
+
+
+                            if (businessService.completerEvenement(ev)) {
+                                System.out.println("L'évènement a bien été complété");
+                            } else {
+                                System.out.println("Erreur lors de la completion de l'évènement");
+                            }
+                        } else {
+                            System.out.println("Cet évenement n'existe pas !");
+                        }
+                        break;
+                    case 3:
+                        currentUser = null;
+                        break;
+                    default:
+                        break;
+                }
             }
-
         } else {
             // TODO Adhérent
 
-            menuSelection = menuAdherent();
-            switch (menuSelection) {
-                case 1:
-                    List<Demande> demandes = businessService.consulterHistorique(currentUser);
+            List<Demande> demandes;
+            while (currentUser != null) {
+                menuSelection = menuAdherent();
+                switch (menuSelection) {
+                    case 1:
+                        demandes = businessService.consulterHistorique(currentUser);
 
-                    for (Demande demande :
-                            demandes) {
-                        System.out.println(demande);
-                    }
-                    break;
-                case 2:
-                    break;
-                case 3:
-                    stop();
-                    return;
-                default:
-                    break;
+                        System.out.println("Liste des demandes :");
+                        for (Demande demande :
+                                demandes) {
+                            System.out.println(demande);
+                        }
+                        System.out.println("---FIN---");
+                        break;
+                    case 2:
+                        Activite activite = null;
+                        Date date;
+                        MomentOfTheDay momentOfTheDay = null;
+
+
+                        System.out.println("-------------- A remplir :");
+
+                        // TODO Catalogue d'activité
+                        List<Activite> activites = new ArrayList<>();
+
+                        boolean found = false;
+                        String acti;
+                        while (!found) {
+                            System.out.println("Activité :");
+                            acti = input.nextLine();
+
+                            for (Activite activite1 : activites) {
+                                if (activite1.getDenomination().equals(acti)) {
+                                    found = true;
+                                    activite = activite1;
+                                    break;
+                                }
+                            }
+                        }
+
+                        System.out.println("Date de l'activité :");
+                        date = Saisie.readDate("dd/MM/yyyy");
+
+                        while (momentOfTheDay == null) {
+                            System.out.println("Moment de la journée " + MomentOfTheDay.all.toString() + " :");
+                            momentOfTheDay = MomentOfTheDay.valueOf(input.nextLine());
+                        }
+                        Demande demande = new Demande(currentUser, date, momentOfTheDay, activite);
+                        if (businessService.posterDemande(demande)) {
+                            System.out.println("La demande a bien été postée");
+                        } else {
+                            System.out.println("Erreur lors de l'ajout de la demande");
+                        }
+                        break;
+                    case 3:
+                        currentUser = null;
+                        break;
+                    default:
+                        break;
+                }
             }
+
         }
 
         // View end

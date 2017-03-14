@@ -17,7 +17,7 @@ public class Demande implements Serializable {
     
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date wantedDate;
-    private String moment;
+    private MomentOfTheDay moment;
     
     @ManyToOne
     private Activite activite;
@@ -31,7 +31,7 @@ public class Demande implements Serializable {
     protected Demande() {
     }
 
-    public Demande(Adherent adherent, Date date, String moment, Activite activite) {
+    public Demande(Adherent adherent, Date date, MomentOfTheDay moment, Activite activite) {
         this.adherent = adherent;
         this.wantedDate = date;
         this.moment = moment;
@@ -62,11 +62,11 @@ public class Demande implements Serializable {
         this.wantedDate = wantedDate;
     }
 
-    public String getMoment() {
+    public MomentOfTheDay getMoment() {
         return moment;
     }
 
-    public void setMoment(String moment) {
+    public void setMoment(MomentOfTheDay moment) {
         this.moment = moment;
     }
 
