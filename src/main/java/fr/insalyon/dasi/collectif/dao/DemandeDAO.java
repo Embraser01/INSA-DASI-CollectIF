@@ -14,7 +14,7 @@ public class DemandeDAO {
     
     public Demande findById(long id) throws Exception {
         EntityManager em = JpaUtil.obtenirEntityManager();
-        Demande demande = null;
+        Demande demande;
         
         demande = em.find(Demande.class, id);
 
@@ -33,11 +33,12 @@ public class DemandeDAO {
             
         return !results.isEmpty();
     }
-    
+
+    @SuppressWarnings("unchecked")
     public List<Demande> findCandidatesForEvent(Date wantedDate, MomentOfTheDay moment, Activite activite) throws Exception {
         EntityManager em = JpaUtil.obtenirEntityManager();
         
-        List<Demande> demandes = null;
+        List<Demande> demandes;
         
         Query jpqlQuery = em.createQuery("SELECT d FROM Demande d WHERE d.wantedDate = :wantedDate AND d.moment = :moment AND d.activite = :activite AND d.evenement IS NULL");
         demandes = jpqlQuery.setParameter("wantedDate", wantedDate)
@@ -47,10 +48,11 @@ public class DemandeDAO {
         
         return demandes;
     }
-    
+
+    @SuppressWarnings("unchecked")
     public List<Demande> findAll() throws Exception {
         EntityManager em = JpaUtil.obtenirEntityManager();
-        List<Demande> demandes = null;
+        List<Demande> demandes;
         
         Query q = em.createQuery("SELECT d FROM Demande d");
         demandes = (List<Demande>) q.getResultList();

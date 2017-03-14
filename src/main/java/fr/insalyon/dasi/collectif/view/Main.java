@@ -241,6 +241,7 @@ public class Main {
             System.out.println("2 - S'inscrire");
             System.out.println("3 - Quitter");
 
+            // TODO Retour vers utils
             selection = input.nextInt();
         }
         return selection;

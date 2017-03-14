@@ -3,6 +3,7 @@ package fr.insalyon.dasi.collectif.business.model;
 
 import java.util.EnumSet;
 
+@SuppressWarnings("unused")
 public enum MomentOfTheDay {
     morning("Matin"),
     afternoon("Après-midi"),
