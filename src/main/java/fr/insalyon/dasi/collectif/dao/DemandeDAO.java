@@ -6,6 +6,8 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import fr.insalyon.dasi.collectif.business.model.Demande;
+import fr.insalyon.dasi.collectif.business.model.MomentOfTheDay;
+
 import java.util.Date;
 
 public class DemandeDAO {
@@ -32,7 +34,7 @@ public class DemandeDAO {
         return !results.isEmpty();
     }
     
-    public List<Demande> findCandidatesForEvent(Date wantedDate, String moment, Activite activite) throws Exception {
+    public List<Demande> findCandidatesForEvent(Date wantedDate, MomentOfTheDay moment, Activite activite) throws Exception {
         EntityManager em = JpaUtil.obtenirEntityManager();
         
         List<Demande> demandes = null;

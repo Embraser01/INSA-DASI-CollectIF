@@ -9,7 +9,7 @@ import java.util.Date;
 public class EvenementPayant extends Evenement implements Serializable {
     private Integer paf;
 
-    public EvenementPayant(Date date, String moment) {
+    public EvenementPayant(Date date, MomentOfTheDay moment) {
         super(date, moment);
     }
 

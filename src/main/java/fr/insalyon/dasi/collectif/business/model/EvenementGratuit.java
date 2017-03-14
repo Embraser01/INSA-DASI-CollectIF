@@ -7,7 +7,7 @@ import java.util.Date;
 @Entity
 public class EvenementGratuit extends Evenement implements Serializable {
 
-    public EvenementGratuit(Date date, String moment) {
+    public EvenementGratuit(Date date, MomentOfTheDay moment) {
         super(date, moment);
     }
 
