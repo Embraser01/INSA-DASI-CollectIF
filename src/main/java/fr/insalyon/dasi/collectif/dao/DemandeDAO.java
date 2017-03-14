@@ -22,21 +22,35 @@ public class DemandeDAO {
         return demande;
     }
     
-    public Demande find(Adherent adherent, Date date, String moment, Activite activite) throws Exception {
+    public boolean existsByValue(Demande demande) throws Exception {
         EntityManager em = JpaUtil.obtenirEntityManager();
         
         Query jpqlQuery = em.createQuery("SELECT d FROM Demande d WHERE d.adherent = :adherent AND d.wantedDate = :wantedDate AND d.moment = :moment AND d.activite = :activite");
-        List results = jpqlQuery.setParameter("adherent", adherent)
-                                .setParameter("wantedDate", date)
+        List results = jpqlQuery.setParameter("adherent", demande.getAdherent())
+                                .setParameter("wantedDate", demande.getWantedDate())
+                                .setParameter("moment", demande.getMoment())
+                                .setParameter("activite", demande.getActivite())
+                                .getResultList();
+            
+        return !results.isEmpty();
+    }
+    
+    public List<Demande> findCandidatesForEvent(Date wantedDate, String moment, Activite activite) throws Exception {
+        EntityManager em = JpaUtil.obtenirEntityManager();
+        
+        List<Demande> demandes = null;
+        try {
+            Query jpqlQuery = em.createQuery("SELECT d FROM Demande d WHERE d.wantedDate = :wantedDate AND d.moment = :moment AND d.activite = :activite");
+            demandes = jpqlQuery.setParameter("wantedDate", wantedDate)
                                 .setParameter("moment", moment)
                                 .setParameter("activite", activite)
                                 .getResultList();
-            
-        if (results.isEmpty()) {
-            return null;
+        }
+        catch(Exception e) {
+            throw e;
         }
         
-        return (Demande)results.get(0);
+        return demandes;
     }
     
     public List<Demande> findAll() throws Exception {
@@ -61,6 +75,7 @@ public class DemandeDAO {
             em.persist(demande);
             JpaUtil.validerTransaction();
         } catch(Exception e) {
+            JpaUtil.annulerTransaction();
             throw e;
         }
     }

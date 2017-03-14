@@ -27,23 +27,19 @@ public class BusinessService {
     private AdherentDAO adherentDAO = new AdherentDAO();
     private DemandeDAO demandeDAO = new DemandeDAO();
     private ActiviteDAO activiteDAO = new ActiviteDAO();
-    private EvenementDAO evenementDAO = new ActiviteDAO();
+    private EvenementDAO evenementDAO = new EvenementDAO();
     
-    public boolean authSignup(String name,
-                              String firstname, 
-                              String address, 
-                              String email,
-                              String password) {
+    public Adherent authSignup(Adherent adherent) {
         try {
-            if (adherentDAO.findByEmail(email) != null) {
-                return false;
+            if (adherentDAO.findByEmail(adherent.getMail()) != null) {
+                return null;
             }
             
-            adherentDAO.add(new Adherent(name, firstname, email, address, password));
-            return true;
+            adherentDAO.add(adherent);
+            return adherent;
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
+            return null;
         }
     }
     
@@ -67,14 +63,25 @@ public class BusinessService {
         return adherent;
     }
     
-    public boolean posterDemande(Adherent adherent, Activite activite, Date date, String moment) {
+    public boolean posterDemande(Demande demande) {
         try {
-            
-            if (demandeDAO.find(adherent, date, moment, activite) != null) {
+            if (demandeDAO.existsByValue(demande)) {
                 return false;
             }
         
-            demandeDAO.add(new Demande(adherent, date, moment, activite));
+            demandeDAO.add(demande);
+            
+            List<Demande> demandesCandidates = demandeDAO.findCandidatesForEvent(demande.getWantedDate(), demande.getMoment(), demande.getActivite());
+            if (demandesCandidates.size() >= demande.getActivite().getNbParticipants()) {
+                Evenement newEvenement;
+                if (demande.getActivite().getPayant()) {
+                    newEvenement = new EvenementPayant(demande.getWantedDate(), demande.getMoment());
+                } else {
+                    newEvenement = new EvenementGratuit(demande.getWantedDate(), demande.getMoment());
+                }
+                
+                evenementDAO.add(newEvenement);
+            }
             return true;
         } catch (Exception e) {
             e.printStackTrace();

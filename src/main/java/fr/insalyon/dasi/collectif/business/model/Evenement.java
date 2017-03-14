@@ -14,7 +14,7 @@ public abstract class Evenement implements Serializable {
     private String id;
 
     @Temporal(javax.persistence.TemporalType.DATE)
-    private Date date;
+    private Date eventDate;
     private String moment;
 
     @ManyToMany(mappedBy = "evenements")
@@ -26,8 +26,8 @@ public abstract class Evenement implements Serializable {
     @ManyToOne
     private Lieu lieu;
 
-    protected Evenement(Date date, String moment) {
-        this.date = date;
+    protected Evenement(Date eventDate, String moment) {
+        this.eventDate = eventDate;
         this.moment = moment;
     }
 
@@ -38,12 +38,12 @@ public abstract class Evenement implements Serializable {
         return id;
     }
 
-    public Date getDate() {
-        return date;
+    public Date getEventDate() {
+        return eventDate;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setEventDate(Date eventDate) {
+        this.eventDate = eventDate;
     }
 
     public String getMoment() {

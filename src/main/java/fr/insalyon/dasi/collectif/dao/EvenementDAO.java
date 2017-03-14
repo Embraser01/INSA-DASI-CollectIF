@@ -33,13 +33,30 @@ public class EvenementDAO {
         return evenements;
     }
     
+    public void add(Evenement evenement) throws Exception {
+        EntityManager em = JpaUtil.obtenirEntityManager();
+        
+        JpaUtil.ouvrirTransaction();
+        try {
+            em.persist(evenement);
+            JpaUtil.validerTransaction();
+        }
+        catch(Exception e) {
+            JpaUtil.annulerTransaction();
+            throw e;
+        }
+    }
+    
     public void update(Evenement evenement) throws Exception {
         EntityManager em = JpaUtil.obtenirEntityManager();
         
+        JpaUtil.ouvrirTransaction();
         try {
             em.merge(evenement);
+            JpaUtil.validerTransaction();
         }
         catch(Exception e) {
+            JpaUtil.annulerTransaction();
             throw e;
         }
     }

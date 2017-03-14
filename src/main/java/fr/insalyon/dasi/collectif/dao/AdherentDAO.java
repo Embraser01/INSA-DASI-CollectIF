@@ -25,7 +25,7 @@ public class AdherentDAO {
 
         return (Adherent)results.get(0);
     }
-    
+
     public List<Adherent> findAll() throws Exception {
         EntityManager em = JpaUtil.obtenirEntityManager();
         List<Adherent> adherents = null;
@@ -39,7 +39,12 @@ public class AdherentDAO {
         EntityManager em = JpaUtil.obtenirEntityManager();
         
         JpaUtil.ouvrirTransaction();
-        em.persist(adherent);
-        JpaUtil.validerTransaction();
+        try {
+            em.persist(adherent);
+            JpaUtil.validerTransaction();
+        } catch (Exception e) {
+            JpaUtil.annulerTransaction();
+            throw e;
+        }
     }
 }
