@@ -10,25 +10,18 @@ public class EvenementDAO {
     public Evenement findById(long id) throws Exception {
         EntityManager em = JpaUtil.obtenirEntityManager();
         Evenement evenement = null;
-        try {
-            evenement = em.find(Evenement.class, id);
-        }
-        catch(Exception e) {
-            throw e;
-        }
+        
+        evenement = em.find(Evenement.class, id);
+
         return evenement;
     }
     
     public List<Evenement> findAll() throws Exception {
         EntityManager em = JpaUtil.obtenirEntityManager();
         List<Evenement> evenements = null;
-        try {
-            Query q = em.createQuery("SELECT e FROM Evenement e");
-            evenements = (List<Evenement>) q.getResultList();
-        }
-        catch(Exception e) {
-            throw e;
-        }
+        
+        Query q = em.createQuery("SELECT e FROM Evenement e");
+        evenements = (List<Evenement>) q.getResultList();
         
         return evenements;
     }
@@ -36,28 +29,12 @@ public class EvenementDAO {
     public void add(Evenement evenement) throws Exception {
         EntityManager em = JpaUtil.obtenirEntityManager();
         
-        JpaUtil.ouvrirTransaction();
-        try {
-            em.persist(evenement);
-            JpaUtil.validerTransaction();
-        }
-        catch(Exception e) {
-            JpaUtil.annulerTransaction();
-            throw e;
-        }
+        em.persist(evenement);
     }
     
     public void update(Evenement evenement) throws Exception {
         EntityManager em = JpaUtil.obtenirEntityManager();
-        
-        JpaUtil.ouvrirTransaction();
-        try {
-            em.merge(evenement);
-            JpaUtil.validerTransaction();
-        }
-        catch(Exception e) {
-            JpaUtil.annulerTransaction();
-            throw e;
-        }
+
+        em.merge(evenement);
     }
 }
