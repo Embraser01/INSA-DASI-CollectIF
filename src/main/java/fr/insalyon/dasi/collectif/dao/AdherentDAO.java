@@ -38,13 +38,6 @@ public class AdherentDAO {
     public void add(Adherent adherent) throws Exception {
         EntityManager em = JpaUtil.obtenirEntityManager();
         
-        JpaUtil.ouvrirTransaction();
-        try {
-            em.persist(adherent);
-            JpaUtil.validerTransaction();
-        } catch (Exception e) {
-            JpaUtil.annulerTransaction();
-            throw e;
-        }
+        em.persist(adherent);
     }
 }

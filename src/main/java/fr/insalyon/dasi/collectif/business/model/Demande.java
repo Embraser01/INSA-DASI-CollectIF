@@ -78,6 +78,14 @@ public class Demande implements Serializable {
         this.activite = activite;
     }
 
+    public Evenement getEvenement() {
+        return evenement;
+    }
+
+    public void setEvenement(Evenement evenement) {
+        this.evenement = evenement;
+    }
+    
     @Override
     public String toString() {
         return "Demande{" + "id=" + id + ", wantedDate=" + wantedDate + ", moment=" + moment + ", activite=" + activite + '}';

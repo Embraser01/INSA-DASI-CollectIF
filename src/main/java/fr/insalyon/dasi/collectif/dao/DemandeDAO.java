@@ -13,12 +13,9 @@ public class DemandeDAO {
     public Demande findById(long id) throws Exception {
         EntityManager em = JpaUtil.obtenirEntityManager();
         Demande demande = null;
-        try {
-            demande = em.find(Demande.class, id);
-        }
-        catch(Exception e) {
-            throw e;
-        }
+        
+        demande = em.find(Demande.class, id);
+
         return demande;
     }
     
@@ -39,16 +36,12 @@ public class DemandeDAO {
         EntityManager em = JpaUtil.obtenirEntityManager();
         
         List<Demande> demandes = null;
-        try {
-            Query jpqlQuery = em.createQuery("SELECT d FROM Demande d WHERE d.wantedDate = :wantedDate AND d.moment = :moment AND d.activite = :activite");
-            demandes = jpqlQuery.setParameter("wantedDate", wantedDate)
-                                .setParameter("moment", moment)
-                                .setParameter("activite", activite)
-                                .getResultList();
-        }
-        catch(Exception e) {
-            throw e;
-        }
+        
+        Query jpqlQuery = em.createQuery("SELECT d FROM Demande d WHERE d.wantedDate = :wantedDate AND d.moment = :moment AND d.activite = :activite AND d.evenement IS NULL");
+        demandes = jpqlQuery.setParameter("wantedDate", wantedDate)
+                            .setParameter("moment", moment)
+                            .setParameter("activite", activite)
+                            .getResultList();
         
         return demandes;
     }
@@ -56,27 +49,16 @@ public class DemandeDAO {
     public List<Demande> findAll() throws Exception {
         EntityManager em = JpaUtil.obtenirEntityManager();
         List<Demande> demandes = null;
-        try {
-            Query q = em.createQuery("SELECT d FROM Demande d");
-            demandes = (List<Demande>) q.getResultList();
-        }
-        catch(Exception e) {
-            throw e;
-        }
+        
+        Query q = em.createQuery("SELECT d FROM Demande d");
+        demandes = (List<Demande>) q.getResultList();
         
         return demandes;
     }
     
     public void add(Demande demande) throws Exception {
         EntityManager em = JpaUtil.obtenirEntityManager();
-        
-        JpaUtil.ouvrirTransaction();
-        try {
-            em.persist(demande);
-            JpaUtil.validerTransaction();
-        } catch(Exception e) {
-            JpaUtil.annulerTransaction();
-            throw e;
-        }
+
+        em.persist(demande);
     }
 }
