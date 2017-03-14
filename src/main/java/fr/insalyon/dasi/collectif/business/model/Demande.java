@@ -25,6 +25,9 @@ public class Demande implements Serializable {
     @ManyToOne
     private Adherent adherent;
 
+    @ManyToOne
+    private Evenement evenement;
+
     protected Demande() {
     }
 
