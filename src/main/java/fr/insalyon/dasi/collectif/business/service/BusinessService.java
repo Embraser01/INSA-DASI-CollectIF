@@ -22,6 +22,7 @@ import fr.insalyon.dasi.collectif.dao.LieuDAO;
 import fr.insalyon.dasi.collectif.util.GeoTest;
 import fr.insalyon.dasi.collectif.util.MailFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.OptimisticLockException;
 
@@ -125,6 +126,7 @@ public class BusinessService {
     public boolean posterDemande(Demande demande) {
         JpaUtil.creerEntityManager();
 
+        // TODO Vérifier qu'il n'a pas déjà posté la demande et que la date > now()
         boolean ret = false;
         try {
             JpaUtil.ouvrirTransaction();
@@ -142,10 +144,31 @@ public class BusinessService {
                     JpaUtil.ouvrirTransaction();
                     List<Demande> demandesCandidates = demandeDAO.findCandidatesForEvent(demande.getWantedDate(), demande.getMoment(), demande.getActivite());
                     if (demandesCandidates.size() >= demande.getActivite().getNbParticipants()) {
+
+                        List<Adherent> participants = new ArrayList<>(demandesCandidates.size());
+
+                        for (Demande d :
+                                demandesCandidates) {
+                            participants.add(d.getAdherent());
+                        }
+
                         if (demande.getActivite().getPayant()) {
-                            newEvenement = new EvenementPayant(demande.getWantedDate(), demande.getMoment());
+                            newEvenement = new EvenementPayant(
+                                    demande.getWantedDate(),
+                                    demande.getMoment(),
+                                    participants,
+                                    demande.getActivite(),
+                                    null,
+                                    null
+                            );
                         } else {
-                            newEvenement = new EvenementGratuit(demande.getWantedDate(), demande.getMoment());
+                            newEvenement = new EvenementGratuit(
+                                    demande.getWantedDate(),
+                                    demande.getMoment(),
+                                    participants,
+                                    demande.getActivite(),
+                                    null
+                            );
                         }
 
                         for (Demande d : demandesCandidates) {

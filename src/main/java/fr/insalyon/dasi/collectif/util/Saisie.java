@@ -14,7 +14,6 @@ import java.util.*;
 public class Saisie {
 
     public static Date readDate(String invite, String dateFormat) {
-        System.out.print(invite);
         DateFormat format = new SimpleDateFormat(dateFormat);
         Date date = null;
 

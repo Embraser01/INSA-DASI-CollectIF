@@ -27,9 +27,12 @@ public abstract class Evenement implements Serializable {
     @ManyToOne
     private Lieu lieu;
 
-    protected Evenement(Date eventDate, MomentOfTheDay moment) {
+    public Evenement(Date eventDate, MomentOfTheDay moment, List<Adherent> adherents, Activite activite, Lieu lieu) {
         this.eventDate = eventDate;
         this.moment = moment;
+        this.adherents = adherents;
+        this.activite = activite;
+        this.lieu = lieu;
     }
 
     public Evenement() {

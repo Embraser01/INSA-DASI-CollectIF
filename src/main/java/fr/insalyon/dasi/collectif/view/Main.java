@@ -140,17 +140,23 @@ public class Main {
                         System.out.println("Activité : " + ev.getActivite().getDenomination());
                         System.out.println("-------------- A remplir :");
 
-                        // TODO Catalogue de lieu
-                        List<String> lieux = new ArrayList<>();
+                        List<Lieu> lieux = businessService.consulterLieux();
+
+                        System.out.println("Liste des lieux disponibles :");
+                        for (Lieu lieu1 : lieux) {
+                            System.out.println(lieu1);
+                        }
+                        System.out.println("---FIN---");
 
                         boolean found = false;
 
                         while (!found) {
-                            String lieu = Saisie.readString("Lieu : ");
+                            Long lieuId = Saisie.readLong("Lieu (id) : ");
 
-                            for (String lieu1 : lieux) {
-                                if (lieu1.equals(lieu)) {
+                            for (Lieu lieu1 : lieux) {
+                                if (Objects.equals(lieu1.getId(), lieuId)) {
                                     found = true;
+                                    ev.setLieu(lieu1);
                                     break;
                                 }
                             }
@@ -159,7 +165,6 @@ public class Main {
                         if (ev.getActivite().getPayant()) {
                             ((EvenementPayant) ev).setPaf(Saisie.readInteger("PAF : "));
                         }
-
 
                         if (businessService.completerEvenement(ev)) {
                             System.out.println("L'évènement a bien été complété");
@@ -209,13 +214,15 @@ public class Main {
 
                     System.out.println("-------------- A remplir :");
 
-                    // TODO Catalogue d'activité
-                    List<Activite> activites = new ArrayList<>();
+                    List<Activite> activites = businessService.consulterActivites();
+                    for (Activite activite1 :
+                            activites) {
+                        System.out.println(activite1);
+                    }
 
                     boolean found = false;
-                    String acti;
                     while (!found) {
-                        acti = Saisie.readString("Activité : ");
+                        String acti = Saisie.readString("Activité : ");
 
                         for (Activite activite1 : activites) {
                             if (activite1.getDenomination().equals(acti)) {
@@ -225,10 +232,10 @@ public class Main {
                             }
                         }
                     }
-                    date = Saisie.readDate("Date de l'activité : ", "dd/MM/yyyy");
+                    date = Saisie.readDate("Date de l'activité (dd/MM/yyyy) : ", "dd/MM/yyyy");
 
                     while (momentOfTheDay == null) {
-                        momentOfTheDay = MomentOfTheDay.valueOf(Saisie.readString("Moment de la journée " + MomentOfTheDay.all.toString() + " :"));
+                        momentOfTheDay = MomentOfTheDay.find(Saisie.readString("Moment de la journée " + MomentOfTheDay.all.toString() + " :"));
                     }
 
                     Demande demande = new Demande(currentUser, date, momentOfTheDay, activite);
