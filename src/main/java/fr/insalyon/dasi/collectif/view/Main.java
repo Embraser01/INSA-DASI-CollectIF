@@ -21,14 +21,28 @@ public class Main {
         init();
 
         BusinessService businessService = new BusinessService();
-        Adherent currentUser = null;
 
         // View start
+        doMain(businessService);
+
+
+        stop();
+    }
+
+    private static void init() {
+        JpaUtil.init();
+    }
+
+    private static void stop() {
+        JpaUtil.destroy();
+    }
+
+
+    private static void doMain(BusinessService businessService) {
         int menuSelection;
+        Adherent currentUser;
 
-        // Connexion de l'utilisateur
-
-        while (currentUser == null) {
+        while (true) {
 
             menuSelection = menuAuth();
 
@@ -41,14 +55,36 @@ public class Main {
                     String password = Saisie.readString("Entrez votre mot de passe : ");
 
                     currentUser = businessService.authLogin(email, password);
+                    // On supprime de la mémoire le mot de passe...
+                    password = "";
                     if (currentUser != null) {
                         System.out.println("Vous êtes bien connecté");
+                        if (currentUser instanceof Responsable) {
+                            doResp((Responsable) currentUser, businessService);
+                        } else {
+                            doAdher(currentUser, businessService);
+                        }
                     } else {
                         System.out.println("Mauvaise combinaison mail/mot de passe");
                     }
                     break;
                 case 2:
-                    currentUser = businessService.authSignup(signup());
+                    String nom = Saisie.readString("Entrez votre nom : ");
+                    String prenom = Saisie.readString("Entrez votre prénom : ");
+                    String mail = Saisie.readString("Entrez votre mail : ");
+                    String adresse = Saisie.readString("Entrez votre adresse : ");
+
+                    String signupPassword = "1";
+                    String passwordConfirmation = "2";
+
+
+                    while (!Objects.equals(signupPassword, passwordConfirmation)) {
+                        signupPassword = Saisie.readString("Entrez votre mot de passe :");
+                        passwordConfirmation = Saisie.readString("Re-entrez votre mot de passe :");
+                    }
+
+                    currentUser = new Adherent(nom, prenom, mail, adresse, signupPassword);
+                    currentUser = businessService.authSignup(currentUser);
                     if (currentUser != null) {
                         System.out.println("Vous êtes bien inscrits");
                     } else {
@@ -62,186 +98,155 @@ public class Main {
                     break;
             }
         }
+    }
 
-        // A partir d'ici on est connecté
+    private static void doResp(Responsable responsable, BusinessService businessService) {
+        List<Evenement> evenements;
+        Evenement ev;
+        int menuSelection;
 
-        if (currentUser instanceof Responsable) {
-            // TODO Responsable
-            List<Evenement> evenements;
-            Evenement ev;
+        while (responsable != null) {
+            menuSelection = menuResponsable();
+            switch (menuSelection) {
+                case 1:
+                    evenements = businessService.consulterEvenements();
 
-            while (currentUser != null) {
-                menuSelection = menuResponsable();
-                switch (menuSelection) {
-                    case 1:
-                        evenements = businessService.consulterEvenements();
+                    System.out.println("Liste des évènements :");
+                    for (Evenement evenement :
+                            evenements) {
+                        System.out.println(evenement);
+                    }
+                    System.out.println("---FIN---");
 
-                        System.out.println("Liste des évènements :");
-                        for (Evenement evenement :
-                                evenements) {
-                            System.out.println(evenement);
+                    break;
+                case 2:
+                    long wantedID = Saisie.readLong("ID de l'évènement à compléter :");
+
+                    ev = null;
+                    evenements = businessService.consulterEvenements();
+
+                    for (Evenement evenement :
+                            evenements) {
+                        if (evenement.getId() == wantedID) {
+                            ev = evenement;
+                            break;
                         }
-                        System.out.println("---FIN---");
+                    }
 
-                        break;
-                    case 2:
-                        long wantedID = Saisie.readLong("ID de l'évènement à compléter :");
+                    if (ev != null) {
 
-                        ev = null;
-                        evenements = businessService.consulterEvenements();
-
-                        for (Evenement evenement :
-                                evenements) {
-                            if (evenement.getId() == wantedID) {
-                                ev = evenement;
-                                break;
-                            }
-                        }
-
-                        if (ev != null) {
-
-                            System.out.println("Id : " + ev.getId());
-                            System.out.println("Activité le : " + ev.getEventDate() + " - " + ev.getMoment());
-                            System.out.println("Activité : " + ev.getActivite().getDenomination());
-                            System.out.println("-------------- A remplir :");
-
-                            // TODO Catalogue de lieu
-                            List<String> lieux = new ArrayList<>();
-
-                            boolean found = false;
-
-                            while (!found) {
-                                String lieu = Saisie.readString("Lieu : ");
-
-                                for (String lieu1 : lieux) {
-                                    if (lieu1.equals(lieu)) {
-                                        found = true;
-                                        break;
-                                    }
-                                }
-                            }
-
-                            if (ev.getActivite().getPayant()) {
-                                ((EvenementPayant) ev).setPaf(Saisie.readInteger("PAF : "));
-                            }
-
-
-                            if (businessService.completerEvenement(ev)) {
-                                System.out.println("L'évènement a bien été complété");
-                            } else {
-                                System.out.println("Erreur lors de la completion de l'évènement");
-                            }
-                        } else {
-                            System.out.println("Cet évenement n'existe pas !");
-                        }
-                        break;
-                    case 3:
-                        currentUser = null;
-                        break;
-                    default:
-                        break;
-                }
-            }
-        } else {
-            // TODO Adhérent
-
-            List<Demande> demandes;
-            while (currentUser != null) {
-                menuSelection = menuAdherent();
-                switch (menuSelection) {
-                    case 1:
-                        demandes = businessService.consulterHistorique(currentUser);
-
-                        System.out.println("Liste des demandes :");
-
-                        if (demandes.size() > 0) {
-                            for (Demande demande :
-                                    demandes) {
-                                System.out.println(demande);
-                            }
-                        } else {
-                            System.out.println("Aucune demande pour l'instant");
-                        }
-                        System.out.println("---FIN---");
-                        break;
-                    case 2:
-                        Activite activite = null;
-                        Date date;
-                        MomentOfTheDay momentOfTheDay = null;
-
-
+                        System.out.println("Id : " + ev.getId());
+                        System.out.println("Activité le : " + ev.getEventDate() + " - " + ev.getMoment());
+                        System.out.println("Activité : " + ev.getActivite().getDenomination());
                         System.out.println("-------------- A remplir :");
 
-                        // TODO Catalogue d'activité
-                        List<Activite> activites = new ArrayList<>();
+                        // TODO Catalogue de lieu
+                        List<String> lieux = new ArrayList<>();
 
                         boolean found = false;
-                        String acti;
-                        while (!found) {
-                            acti = Saisie.readString("Activité : ");
 
-                            for (Activite activite1 : activites) {
-                                if (activite1.getDenomination().equals(acti)) {
+                        while (!found) {
+                            String lieu = Saisie.readString("Lieu : ");
+
+                            for (String lieu1 : lieux) {
+                                if (lieu1.equals(lieu)) {
                                     found = true;
-                                    activite = activite1;
                                     break;
                                 }
                             }
                         }
-                        date = Saisie.readDate("Date de l'activité : ", "dd/MM/yyyy");
 
-                        while (momentOfTheDay == null) {
-                            momentOfTheDay = MomentOfTheDay.valueOf(Saisie.readString("Moment de la journée " + MomentOfTheDay.all.toString() + " :"));
+                        if (ev.getActivite().getPayant()) {
+                            ((EvenementPayant) ev).setPaf(Saisie.readInteger("PAF : "));
                         }
 
-                        Demande demande = new Demande(currentUser, date, momentOfTheDay, activite);
-                        if (businessService.posterDemande(demande)) {
-                            System.out.println("La demande a bien été postée");
+
+                        if (businessService.completerEvenement(ev)) {
+                            System.out.println("L'évènement a bien été complété");
                         } else {
-                            System.out.println("Erreur lors de l'ajout de la demande");
+                            System.out.println("Erreur lors de la completion de l'évènement");
                         }
-                        break;
-                    case 3:
-                        currentUser = null;
-                        break;
-                    default:
-                        break;
-                }
+                    } else {
+                        System.out.println("Cet évenement n'existe pas !");
+                    }
+                    break;
+                case 3:
+                    responsable = null;
+                    break;
+                default:
+                    break;
             }
-
         }
-
-        // View end
-        stop();
     }
 
-    private static void init() {
-        JpaUtil.init();
-    }
+    private static void doAdher(Adherent currentUser, BusinessService businessService) {
+        List<Demande> demandes;
+        int menuSelection;
 
-    private static void stop() {
-        JpaUtil.destroy();
-    }
+        while (currentUser != null) {
+            menuSelection = menuAdherent();
+            switch (menuSelection) {
+                case 1:
+                    demandes = businessService.consulterHistorique(currentUser);
+
+                    System.out.println("Liste des demandes :");
+
+                    if (demandes.size() > 0) {
+                        for (Demande demande :
+                                demandes) {
+                            System.out.println(demande);
+                        }
+                    } else {
+                        System.out.println("Aucune demande pour l'instant");
+                    }
+                    System.out.println("---FIN---");
+                    break;
+                case 2:
+                    Activite activite = null;
+                    Date date;
+                    MomentOfTheDay momentOfTheDay = null;
 
 
-    private static Adherent signup() {
+                    System.out.println("-------------- A remplir :");
 
-        String nom = Saisie.readString("Entrez votre nom : ");
-        String prenom = Saisie.readString("Entrez votre prénom : ");
-        String mail = Saisie.readString("Entrez votre mail : ");
-        String adresse = Saisie.readString("Entrez votre adresse : ");
+                    // TODO Catalogue d'activité
+                    List<Activite> activites = new ArrayList<>();
 
-        String password = "1";
-        String passwordConfirmation = "2";
+                    boolean found = false;
+                    String acti;
+                    while (!found) {
+                        acti = Saisie.readString("Activité : ");
 
+                        for (Activite activite1 : activites) {
+                            if (activite1.getDenomination().equals(acti)) {
+                                found = true;
+                                activite = activite1;
+                                break;
+                            }
+                        }
+                    }
+                    date = Saisie.readDate("Date de l'activité : ", "dd/MM/yyyy");
 
-        while (!Objects.equals(password, passwordConfirmation)) {
-            password = Saisie.readString("Entrez votre mot de passe :");
-            passwordConfirmation = Saisie.readString("Re-entrez votre mot de passe :");
+                    while (momentOfTheDay == null) {
+                        momentOfTheDay = MomentOfTheDay.valueOf(Saisie.readString("Moment de la journée " + MomentOfTheDay.all.toString() + " :"));
+                    }
+
+                    Demande demande = new Demande(currentUser, date, momentOfTheDay, activite);
+                    if (businessService.posterDemande(demande)) {
+                        System.out.println("La demande a bien été postée");
+                    } else {
+                        System.out.println("Erreur lors de l'ajout de la demande");
+                    }
+                    break;
+                case 3:
+                    currentUser = null;
+                    break;
+                default:
+                    break;
+            }
         }
-
-        return new Adherent(nom, prenom, mail, adresse, password);
     }
+
 
     private static int menuAuth() {
 
@@ -260,7 +265,7 @@ public class Main {
         System.out.println("-------------------------\n");
         System.out.println("1 - Consulter les demandes");
         System.out.println("2 - Poster une demande");
-        System.out.println("3 - Se déconnecter et quitter");
+        System.out.println("3 - Se déconnecter");
 
         return Saisie.readInteger("Selection :", 1, 2, 3);
     }
@@ -271,7 +276,7 @@ public class Main {
         System.out.println("-------------------------\n");
         System.out.println("1 - Consulter les évènements");
         System.out.println("2 - Valider un évènement");
-        System.out.println("3 - Se déconnecter et quitter");
+        System.out.println("3 - Se déconnecter");
 
         return Saisie.readInteger("Selection :", 1, 2, 3);
     }
