@@ -43,12 +43,16 @@ public class Main {
                     currentUser = businessService.authLogin(email, password);
                     if (currentUser != null) {
                         System.out.println("Vous êtes bien connecté");
+                    } else {
+                        System.out.println("Mauvaise combinaison mail/mot de passe");
                     }
                     break;
                 case 2:
                     currentUser = businessService.authSignup(signup());
                     if (currentUser != null) {
                         System.out.println("Vous êtes bien inscrits");
+                    } else {
+                        System.out.println("Erreur lors de l'inscription");
                     }
                     break;
                 case 3:
@@ -149,9 +153,14 @@ public class Main {
                         demandes = businessService.consulterHistorique(currentUser);
 
                         System.out.println("Liste des demandes :");
-                        for (Demande demande :
-                                demandes) {
-                            System.out.println(demande);
+
+                        if (demandes.size() > 0) {
+                            for (Demande demande :
+                                    demandes) {
+                                System.out.println(demande);
+                            }
+                        } else {
+                            System.out.println("Aucune demande pour l'instant");
                         }
                         System.out.println("---FIN---");
                         break;
@@ -208,11 +217,9 @@ public class Main {
 
     private static void init() {
         JpaUtil.init();
-        JpaUtil.creerEntityManager();
     }
 
     private static void stop() {
-        JpaUtil.fermerEntityManager();
         JpaUtil.destroy();
     }
 
