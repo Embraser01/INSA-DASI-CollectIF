@@ -46,8 +46,10 @@ public class BusinessService {
             }
             
             LatLng latlng = GeoTest.getLatLng(adherent.getAdresse());
-            adherent.setLatitudeLongitude(latlng.lat, latlng.lng);
-            
+            if (latlng != null) {
+                adherent.setLatitudeLongitude(latlng.lat, latlng.lng);
+            }
+
             adherentDAO.add(adherent);
             
             JpaUtil.validerTransaction();
@@ -66,7 +68,7 @@ public class BusinessService {
     public Adherent authLogin(String email, String password) {
         JpaUtil.creerEntityManager();
         
-        Adherent adherent = null;
+        Adherent adherent;
         try {
             adherent = adherentDAO.findByEmail(email);
         } catch (Exception e) {
