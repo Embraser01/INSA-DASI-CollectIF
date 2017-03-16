@@ -23,6 +23,7 @@ import fr.insalyon.dasi.collectif.util.GeoTest;
 import fr.insalyon.dasi.collectif.util.MailFactory;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.OptimisticLockException;
 
@@ -126,7 +127,12 @@ public class BusinessService {
     public boolean posterDemande(Demande demande) {
         JpaUtil.creerEntityManager();
 
-        // TODO Vérifier qu'il n'a pas déjà posté la demande et que la date > now()
+        int dateCompare = demande.getWantedDate().compareTo(new Date());
+        if (dateCompare == -1) {
+            // Si la date est déjà passé
+            // FIXME Vérifier également le moment de la journée !
+            return false;
+        }
         boolean ret = false;
         try {
             JpaUtil.ouvrirTransaction();
@@ -186,19 +192,6 @@ public class BusinessService {
                     }
                 } while (retry);
 
-
-                // Send mail to each user
-
-                if (newEvenement != null) {
-                    for (Adherent ad : newEvenement.getAdherents()) {
-                        technicalService.sendMail(
-                                ad.getMail(),
-                                "Nouvel Evènement Collect'IF",
-                                MailFactory.makeMailFromEvent(newEvenement, ad)
-                        );
-                    }
-                }
-
                 ret = true;
             }
         } catch (Exception e) {
@@ -213,9 +206,9 @@ public class BusinessService {
 
     public List<Demande> consulterHistorique(Adherent adherent) {
         JpaUtil.creerEntityManager();
-        List<Demande> ret = null;
+        List<Demande> ret;
         try {
-            ret = demandeDAO.findAll();
+            ret = demandeDAO.findAllByUser(adherent);
         } catch (Exception e) {
             e.printStackTrace();
             ret = null;
@@ -227,7 +220,7 @@ public class BusinessService {
 
     public List<Evenement> consulterEvenements() {
         JpaUtil.creerEntityManager();
-        List<Evenement> ret = null;
+        List<Evenement> ret;
         try {
             ret = evenementDAO.findAll();
         } catch (Exception e) {
@@ -243,10 +236,22 @@ public class BusinessService {
         JpaUtil.creerEntityManager();
 
         JpaUtil.ouvrirTransaction();
-        boolean ret = false;
+        boolean ret;
         try {
             evenementDAO.update(evenement);
             JpaUtil.validerTransaction();
+
+            // Send mail to each user
+
+            if (evenement != null) {
+                for (Adherent ad : evenement.getAdherents()) {
+                    technicalService.sendMail(
+                            ad.getMail(),
+                            "Nouvel Evènement Collect'IF",
+                            MailFactory.makeMailFromEvent(evenement, ad)
+                    );
+                }
+            }
             ret = true;
         } catch (Exception e) {
             JpaUtil.annulerTransaction();

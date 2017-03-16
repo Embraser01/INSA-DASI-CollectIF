@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@Inheritance( strategy = InheritanceType.JOINED)
+@Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Evenement implements Serializable {
 
     @Id
@@ -84,5 +84,17 @@ public abstract class Evenement implements Serializable {
 
     public void setLieu(Lieu lieu) {
         this.lieu = lieu;
+    }
+
+    @Override
+    public String toString() {
+        return "Evenement{" +
+                "id=" + id +
+                ", eventDate=" + eventDate +
+                ", moment=" + moment +
+                ", adherents=" + adherents +
+                ", activite=" + activite +
+                ", lieu=" + lieu +
+                '}';
     }
 }

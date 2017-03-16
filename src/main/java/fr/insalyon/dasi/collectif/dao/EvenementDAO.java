@@ -13,22 +13,25 @@ public class EvenementDAO {
         
         evenement = em.find(Evenement.class, id);
 
+        // Load adhérents
+        evenement.getAdherents().size();
         return evenement;
     }
     
+    @SuppressWarnings("unchecked")
     public List<Evenement> findAll() throws Exception {
         EntityManager em = JpaUtil.obtenirEntityManager();
         List<Evenement> evenements = null;
         
-        Query q = em.createQuery("SELECT e FROM Evenement e");
+        Query q = em.createQuery("SELECT e FROM Evenement e ORDER BY e.eventDate DESC");
         evenements = (List<Evenement>) q.getResultList();
-        
+
         return evenements;
     }
     
     public void add(Evenement evenement) throws Exception {
         EntityManager em = JpaUtil.obtenirEntityManager();
-        
+        // FIXME Le Persist n'enregistre pas dans la table "ADHERENT_EVENEMENT" et je sais pas quoi faire :/
         em.persist(evenement);
     }
     

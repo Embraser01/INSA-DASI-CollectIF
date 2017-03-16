@@ -87,6 +87,11 @@ public class Main {
                     currentUser = businessService.authSignup(currentUser);
                     if (currentUser != null) {
                         System.out.println("Vous êtes bien inscrits");
+                        if (currentUser instanceof Responsable) {
+                            doResp((Responsable) currentUser, businessService);
+                        } else {
+                            doAdher(currentUser, businessService);
+                        }
                     } else {
                         System.out.println("Erreur lors de l'inscription");
                     }
@@ -242,7 +247,7 @@ public class Main {
                     if (businessService.posterDemande(demande)) {
                         System.out.println("La demande a bien été postée");
                     } else {
-                        System.out.println("Erreur lors de l'ajout de la demande");
+                        System.out.println("Erreur lors de l'ajout de la demande (la date est déjà passée ?)");
                     }
                     break;
                 case 3:
@@ -282,7 +287,7 @@ public class Main {
         System.out.println("Menu Responsable : ");
         System.out.println("-------------------------\n");
         System.out.println("1 - Consulter les évènements");
-        System.out.println("2 - Valider un évènement");
+        System.out.println("2 - Valider/Modifier un évènement");
         System.out.println("3 - Se déconnecter");
 
         return Saisie.readInteger("Selection :", 1, 2, 3);

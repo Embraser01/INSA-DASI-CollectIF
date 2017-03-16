@@ -5,7 +5,7 @@ import java.util.List;
 import javax.persistence.*;
 
 @Entity
-@Inheritance( strategy = InheritanceType.SINGLE_TABLE)
+@Inheritance( strategy = InheritanceType.JOINED)
 public class Adherent implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -94,6 +94,15 @@ public class Adherent implements Serializable {
     public void setLatitudeLongitude(Double latitude, Double longitude) {
         this.latitude = latitude;
         this.longitude = longitude;
+    }
+
+
+    public List<Demande> getDemandes() {
+        return demandes;
+    }
+
+    public List<Evenement> getEvenements() {
+        return evenements;
     }
 
     @Override

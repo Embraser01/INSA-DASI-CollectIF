@@ -25,4 +25,11 @@ public class EvenementPayant extends Evenement implements Serializable {
     public void setPaf(Integer paf) {
         this.paf = paf;
     }
+
+    @Override
+    public String toString() {
+        return "EvenementPayant{" +
+                "paf=" + paf +
+                "} " + super.toString();
+    }
 }
