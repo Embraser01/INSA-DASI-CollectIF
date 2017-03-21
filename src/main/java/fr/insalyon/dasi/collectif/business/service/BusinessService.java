@@ -95,6 +95,7 @@ public class BusinessService {
         if (adherent != null) {
             if (!adherent.getPassword().equals(password)) {
                 adherent = null;
+                // TODO SHA256
             }
         }
 
