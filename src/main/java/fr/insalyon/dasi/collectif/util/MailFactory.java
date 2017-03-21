@@ -4,6 +4,7 @@ import com.google.maps.model.LatLng;
 import fr.insalyon.dasi.collectif.business.model.Adherent;
 import fr.insalyon.dasi.collectif.business.model.Evenement;
 import fr.insalyon.dasi.collectif.business.model.EvenementPayant;
+import fr.insalyon.dasi.collectif.business.model.Responsable;
 
 import java.text.DateFormat;
 import java.util.Locale;
@@ -66,5 +67,20 @@ public class MailFactory {
                 "        Nous vous confirmons votre adhésion à l'association COLLECT'IF. Votre numéro d'adhérent est : %d.";
 
         return String.format(content, newUser.getPrenom(), newUser.getId());
+    }
+
+    public static String makeMailFromSignupForResp(Adherent newUser, Responsable responsable) {
+        String content = "Bonjour %s,\n\n " +
+                "        Un nouvel adhérent s'est inscrit à l'association COLLECT'IF. Info :" +
+                "                Nom, Prénom : %s, %s";
+
+        return String.format(content, responsable.getPrenom(), newUser.getNom(), newUser.getPrenom());
+    }
+
+    public static String makeMailFromSignupFailure(Adherent adherent) {
+        String content = "Bonjour %s,\n\n " +
+                "        Votre adhésion à l'association COLLECT'IF a malencontreusment échoué... Merci de recommencer ultérieurement.";
+
+        return String.format(content, adherent.getPrenom(), adherent.getId());
     }
 }

@@ -25,6 +25,9 @@ public class Demande implements Serializable {
     @ManyToOne
     private Evenement evenement;
 
+    @Version
+    private Long version;
+
     protected Demande() {
     }
 

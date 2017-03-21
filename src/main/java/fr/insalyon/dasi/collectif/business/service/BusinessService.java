@@ -6,19 +6,8 @@
 package fr.insalyon.dasi.collectif.business.service;
 
 import com.google.maps.model.LatLng;
-import fr.insalyon.dasi.collectif.dao.ActiviteDAO;
-import fr.insalyon.dasi.collectif.dao.AdherentDAO;
-import fr.insalyon.dasi.collectif.dao.DemandeDAO;
-import fr.insalyon.dasi.collectif.dao.EvenementDAO;
-import fr.insalyon.dasi.collectif.business.model.Activite;
-import fr.insalyon.dasi.collectif.business.model.Adherent;
-import fr.insalyon.dasi.collectif.business.model.Demande;
-import fr.insalyon.dasi.collectif.business.model.Evenement;
-import fr.insalyon.dasi.collectif.business.model.EvenementGratuit;
-import fr.insalyon.dasi.collectif.business.model.EvenementPayant;
-import fr.insalyon.dasi.collectif.business.model.Lieu;
-import fr.insalyon.dasi.collectif.dao.JpaUtil;
-import fr.insalyon.dasi.collectif.dao.LieuDAO;
+import fr.insalyon.dasi.collectif.business.model.*;
+import fr.insalyon.dasi.collectif.dao.*;
 import fr.insalyon.dasi.collectif.util.GeoTest;
 import fr.insalyon.dasi.collectif.util.MailFactory;
 
@@ -32,6 +21,7 @@ import javax.persistence.OptimisticLockException;
  */
 public class BusinessService {
     private AdherentDAO adherentDAO = new AdherentDAO();
+    private ResponsableDAO responsableDAO = new ResponsableDAO();
     private DemandeDAO demandeDAO = new DemandeDAO();
     private ActiviteDAO activiteDAO = new ActiviteDAO();
     private EvenementDAO evenementDAO = new EvenementDAO();
@@ -65,10 +55,26 @@ public class BusinessService {
                     MailFactory.makeMailFromSignup(adherent)
             );
 
+            List<Responsable> responsables = responsableDAO.findAll();
+            for (Responsable resp : responsables) {
+                technicalService.sendMail(
+                        resp.getMail(),
+                        "Nouvel adhérent chez Collect'IF",
+                        MailFactory.makeMailFromSignupForResp(adherent, resp)
+                );
+            }
+
+
         } catch (Exception e) {
             JpaUtil.annulerTransaction();
             e.printStackTrace();
             ret = null;
+
+            technicalService.sendMail(
+                    adherent.getMail(),
+                    "Erreur lors de l'inscription chez Collect'IF",
+                    MailFactory.makeMailFromSignupFailure(adherent)
+            );
         }
 
         JpaUtil.fermerEntityManager();
@@ -184,7 +190,7 @@ public class BusinessService {
                         evenementDAO.add(newEvenement);
 
 
-                        for (Adherent adherent: participants) {
+                        for (Adherent adherent : participants) {
                             adherent.addEvent(newEvenement);
                         }
                     }
