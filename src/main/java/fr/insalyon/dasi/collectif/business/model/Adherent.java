@@ -110,4 +110,7 @@ public class Adherent implements Serializable {
         return "Adherent{" + "id=" + id + ", nom=" + nom + ", prenom=" + prenom + ", mail=" + mail + ", adresse=" + adresse + ", password=" + password + ", longitude=" + longitude + ", latitude=" + latitude + '}';
     }
 
+    public void addEvent(Evenement newEvenement) {
+        evenements.add(newEvenement);
+    }
 }

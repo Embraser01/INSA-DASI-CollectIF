@@ -52,11 +52,15 @@ public class JpaUtil {
 
     // Méthode pour avoir des messages de Log dans le bon ordre (log)
     private static void log(String message) {
+
+        /* On enlève le spam
+
         System.out.flush();
         pause(5);
         System.err.println("[JpaUtil:Log] " + message);
         System.err.flush();
         pause(5);
+        */
     }
 
     /**
