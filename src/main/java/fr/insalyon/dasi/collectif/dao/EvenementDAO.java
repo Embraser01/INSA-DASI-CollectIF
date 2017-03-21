@@ -31,7 +31,6 @@ public class EvenementDAO {
     
     public void add(Evenement evenement) throws Exception {
         EntityManager em = JpaUtil.obtenirEntityManager();
-        // FIXME Le Persist n'enregistre pas dans la table "ADHERENT_EVENEMENT" et je sais pas quoi faire :/
         em.persist(evenement);
     }
     

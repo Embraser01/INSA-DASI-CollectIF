@@ -181,12 +181,12 @@ public class BusinessService {
                             d.setEvenement(newEvenement);
                         }
 
+                        evenementDAO.add(newEvenement);
+
+
                         for (Adherent adherent: participants) {
                             adherent.addEvent(newEvenement);
                         }
-
-                        evenementDAO.add(newEvenement);
-
                     }
                     try {
                         JpaUtil.validerTransaction();
