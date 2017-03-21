@@ -146,7 +146,7 @@ public class Main {
                         System.out.println("-------------- A remplir :");
 
                         List<Lieu> lieux = businessService.consulterLieux();
-                        // TODO Cac
+                        // TODO Calcule moyenne
 
                         System.out.println("Liste des lieux disponibles :");
                         for (Lieu lieu1 : lieux) {
