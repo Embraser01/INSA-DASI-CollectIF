@@ -9,7 +9,7 @@ public class AdherentDAO {
     
     public Adherent findById(long id) throws Exception {
         EntityManager em = JpaUtil.obtenirEntityManager();
-        Adherent adherent = null;
+        Adherent adherent;
         adherent = em.find(Adherent.class, id);
         return adherent;
     }
@@ -26,6 +26,7 @@ public class AdherentDAO {
         return (Adherent)results.get(0);
     }
 
+    @SuppressWarnings("unchecked")
     public List<Adherent> findAll() throws Exception {
         EntityManager em = JpaUtil.obtenirEntityManager();
         List<Adherent> adherents = null;

@@ -6,6 +6,7 @@
 package fr.insalyon.dasi.collectif.business.service;
 
 import com.google.maps.model.LatLng;
+import fr.insalyon.dasi.collectif.business.exception.*;
 import fr.insalyon.dasi.collectif.business.model.*;
 import fr.insalyon.dasi.collectif.dao.*;
 import fr.insalyon.dasi.collectif.util.GeoTest;
@@ -16,9 +17,7 @@ import java.util.Date;
 import java.util.List;
 import javax.persistence.RollbackException;
 
-/**
- * @author tbourvon
- */
+
 public class BusinessService {
     private AdherentDAO adherentDAO = new AdherentDAO();
     private ResponsableDAO responsableDAO = new ResponsableDAO();
@@ -28,14 +27,13 @@ public class BusinessService {
     private LieuDAO lieuDAO = new LieuDAO();
     private TechnicalService technicalService = new TechnicalService();
 
-    public Adherent authSignup(Adherent adherent) {
+    public Adherent authSignup(Adherent adherent) throws ServiceException, AdherentAlreadyExistsException {
         JpaUtil.creerEntityManager();
 
-        Adherent ret;
         try {
             JpaUtil.ouvrirTransaction();
             if (adherentDAO.findByEmail(adherent.getMail()) != null) {
-                return null;
+                throw new AdherentAlreadyExistsException();
             }
 
             LatLng latlng = GeoTest.getLatLng(adherent.getAdresse());
@@ -46,8 +44,6 @@ public class BusinessService {
             adherentDAO.add(adherent);
 
             JpaUtil.validerTransaction();
-
-            ret = adherent;
 
             technicalService.sendMail(
                     adherent.getMail(),
@@ -64,24 +60,27 @@ public class BusinessService {
                 );
             }
 
-
+        } catch (AdherentAlreadyExistsException e) {
+            // On renvoie cette erreur à la vue
+            throw e;
         } catch (Exception e) {
             JpaUtil.annulerTransaction();
             e.printStackTrace();
-            ret = null;
 
             technicalService.sendMail(
                     adherent.getMail(),
                     "Erreur lors de l'inscription chez Collect'IF",
                     MailFactory.makeMailFromSignupFailure(adherent)
             );
+
+            throw new ServiceException();
         }
 
         JpaUtil.fermerEntityManager();
-        return ret;
+        return adherent;
     }
 
-    public Adherent authLogin(String email, String password) {
+    public Adherent authLogin(String email, String password) throws ServiceException, AdherentNotFoundException {
         JpaUtil.creerEntityManager();
 
         Adherent adherent;
@@ -89,7 +88,7 @@ public class BusinessService {
             adherent = adherentDAO.findByEmail(email);
         } catch (Exception e) {
             e.printStackTrace();
-            adherent = null;
+            throw new ServiceException();
         }
 
         if (adherent != null) {
@@ -99,179 +98,186 @@ public class BusinessService {
             }
         }
 
+        if (adherent == null) {
+            throw new AdherentNotFoundException();
+        }
+
         JpaUtil.fermerEntityManager();
         return adherent;
     }
 
-    public List<Lieu> consulterLieux() {
+    public List<Lieu> consulterLieux() throws ServiceException {
         JpaUtil.creerEntityManager();
         List<Lieu> ret = null;
         try {
             ret = lieuDAO.findAll();
         } catch (Exception e) {
             e.printStackTrace();
-            ret = null;
+            throw new ServiceException();
         }
 
         JpaUtil.fermerEntityManager();
         return ret;
     }
 
-    public List<Activite> consulterActivites() {
+    public List<Activite> consulterActivites() throws ServiceException {
         JpaUtil.creerEntityManager();
         List<Activite> ret = null;
         try {
             ret = activiteDAO.findAll();
         } catch (Exception e) {
             e.printStackTrace();
-            ret = null;
+            throw new ServiceException();
         }
 
         JpaUtil.fermerEntityManager();
         return ret;
     }
 
-    public boolean posterDemande(Demande demande) {
+    public void posterDemande(Demande demande) throws DemandeBadDateException, DemandeAlreadyExistsException, ServiceException {
         JpaUtil.creerEntityManager();
 
         int dateCompare = demande.getWantedDate().compareTo(new Date());
         if (dateCompare == -1) {
             // Si la date est déjà passé
             // FIXME Vérifier également le moment de la journée !
-            return false;
+            throw new DemandeBadDateException();
         }
-        boolean ret = false;
+
         try {
+
             JpaUtil.ouvrirTransaction();
             if (demandeDAO.existsByValue(demande)) {
                 JpaUtil.annulerTransaction();
-                ret = false;
-            } else {
-                demandeDAO.add(demande);
-                JpaUtil.validerTransaction();
-
-                Evenement newEvenement;
-                boolean retry;
-                do {
-                    newEvenement = null;
-                    JpaUtil.ouvrirTransaction();
-                    List<Demande> demandesCandidates = demandeDAO.findCandidatesForEvent(demande.getWantedDate(), demande.getMoment(), demande.getActivite());
-                    if (demandesCandidates.size() >= demande.getActivite().getNbParticipants()) {
-
-                        List<Adherent> participants = new ArrayList<>(demandesCandidates.size());
-
-                        for (Demande d :
-                                demandesCandidates) {
-                            participants.add(d.getAdherent());
-                        }
-
-                        if (demande.getActivite().getPayant()) {
-                            newEvenement = new EvenementPayant(
-                                    demande.getWantedDate(),
-                                    demande.getMoment(),
-                                    participants,
-                                    demande.getActivite(),
-                                    null,
-                                    null
-                            );
-                        } else {
-                            newEvenement = new EvenementGratuit(
-                                    demande.getWantedDate(),
-                                    demande.getMoment(),
-                                    participants,
-                                    demande.getActivite(),
-                                    null
-                            );
-                        }
-
-                        for (Demande d : demandesCandidates) {
-                            d.setEvenement(newEvenement);
-                        }
-
-                        evenementDAO.add(newEvenement);
-
-
-                        for (Adherent adherent : participants) {
-                            adherent.addEvent(newEvenement);
-                        }
-                    }
-                    try {
-                        JpaUtil.validerTransaction();
-                        retry = false;
-                    } catch (RollbackException e) {
-                        JpaUtil.annulerTransaction();
-                        retry = true;
-                    }
-                } while (retry);
-
-                ret = true;
+                throw new DemandeAlreadyExistsException();
             }
+
+            demandeDAO.add(demande);
+            JpaUtil.validerTransaction();
+
+            Evenement newEvenement;
+            boolean retry;
+            do {
+                JpaUtil.ouvrirTransaction();
+                List<Demande> demandesCandidates = demandeDAO.findCandidatesForEvent(demande.getWantedDate(), demande.getMoment(), demande.getActivite());
+                if (demandesCandidates.size() >= demande.getActivite().getNbParticipants()) {
+
+                    List<Adherent> participants = new ArrayList<>(demandesCandidates.size());
+
+                    for (Demande d :
+                            demandesCandidates) {
+                        participants.add(d.getAdherent());
+                    }
+
+                    if (demande.getActivite().getPayant()) {
+                        newEvenement = new EvenementPayant(
+                                demande.getWantedDate(),
+                                demande.getMoment(),
+                                participants,
+                                demande.getActivite(),
+                                null,
+                                null
+                        );
+                    } else {
+                        newEvenement = new EvenementGratuit(
+                                demande.getWantedDate(),
+                                demande.getMoment(),
+                                participants,
+                                demande.getActivite(),
+                                null
+                        );
+                    }
+
+                    for (Demande d : demandesCandidates) {
+                        d.setEvenement(newEvenement);
+                    }
+
+                    evenementDAO.add(newEvenement);
+
+
+                    for (Adherent adherent : participants) {
+                        adherent.addEvent(newEvenement);
+                    }
+                }
+                try {
+                    JpaUtil.validerTransaction();
+                    retry = false;
+                } catch (RollbackException e) {
+                    // OptimisticLockException
+                    JpaUtil.annulerTransaction();
+                    retry = true;
+                }
+
+            } while (retry);
+
+        } catch (DemandeAlreadyExistsException e) {
+            throw e;
         } catch (Exception e) {
             JpaUtil.annulerTransaction();
             e.printStackTrace();
-            ret = false;
+            throw new ServiceException();
         }
 
         JpaUtil.fermerEntityManager();
-        return ret;
     }
 
-    public List<Demande> consulterHistorique(Adherent adherent) {
+    public List<Demande> consulterHistorique(Adherent adherent) throws ServiceException {
         JpaUtil.creerEntityManager();
         List<Demande> ret;
         try {
             ret = demandeDAO.findAllByUser(adherent);
         } catch (Exception e) {
             e.printStackTrace();
-            ret = null;
+            throw new ServiceException();
         }
 
         JpaUtil.fermerEntityManager();
         return ret;
     }
 
-    public List<Evenement> consulterEvenements() {
+    public List<Evenement> consulterEvenements() throws ServiceException {
         JpaUtil.creerEntityManager();
         List<Evenement> ret;
         try {
             ret = evenementDAO.findAll();
         } catch (Exception e) {
             e.printStackTrace();
-            ret = null;
+            throw new ServiceException();
         }
 
         JpaUtil.fermerEntityManager();
         return ret;
     }
 
-    public boolean completerEvenement(Evenement evenement) {
+    public void completerEvenement(Evenement evenement) throws ServiceException, EvenementNotFoundException {
         JpaUtil.creerEntityManager();
 
+        try {
+            evenementDAO.findById(evenement.getId());
+        }catch (Exception e) {
+            throw new EvenementNotFoundException();
+        }
+
         JpaUtil.ouvrirTransaction();
-        boolean ret;
         try {
             evenementDAO.update(evenement);
             JpaUtil.validerTransaction();
 
             // Send mail to each user
 
-            if (evenement != null) {
-                for (Adherent ad : evenement.getAdherents()) {
-                    technicalService.sendMail(
-                            ad.getMail(),
-                            "Nouvel Evènement Collect'IF",
-                            MailFactory.makeMailFromEvent(evenement, ad)
-                    );
-                }
+            for (Adherent ad : evenement.getAdherents()) {
+                technicalService.sendMail(
+                        ad.getMail(),
+                        "Nouvel Evènement Collect'IF",
+                        MailFactory.makeMailFromEvent(evenement, ad)
+                );
             }
-            ret = true;
         } catch (Exception e) {
             JpaUtil.annulerTransaction();
             e.printStackTrace();
-            ret = false;
+            throw new ServiceException();
         }
 
         JpaUtil.fermerEntityManager();
-        return ret;
     }
 }
