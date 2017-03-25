@@ -162,6 +162,9 @@ public class BusinessService {
                 List<Demande> demandesCandidates = demandeDAO.findCandidatesForEvent(demande.getWantedDate(), demande.getMoment(), demande.getActivite());
                 if (demandesCandidates.size() >= demande.getActivite().getNbParticipants()) {
 
+                    // On enlève le surplus de demandes
+                    demandesCandidates = demandesCandidates.subList(0, demande.getActivite().getNbParticipants());
+
                     List<Adherent> participants = new ArrayList<>(demandesCandidates.size());
 
                     for (Demande d :
@@ -254,7 +257,7 @@ public class BusinessService {
 
         try {
             evenementDAO.findById(evenement.getId());
-        }catch (Exception e) {
+        } catch (Exception e) {
             throw new EvenementNotFoundException();
         }
 
