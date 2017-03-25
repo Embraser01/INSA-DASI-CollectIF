@@ -11,6 +11,7 @@ import fr.insalyon.dasi.collectif.business.model.*;
 import fr.insalyon.dasi.collectif.dao.*;
 import fr.insalyon.dasi.collectif.util.GeoTest;
 import fr.insalyon.dasi.collectif.util.MailFactory;
+import fr.insalyon.dasi.collectif.util.PasswordStorage;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -40,6 +41,8 @@ public class BusinessService {
             if (latlng != null) {
                 adherent.setLatitudeLongitude(latlng.lat, latlng.lng);
             }
+
+            adherent.setPassword(PasswordStorage.newStorageString(adherent.getPassword()));
 
             adherentDAO.add(adherent);
 
@@ -92,9 +95,8 @@ public class BusinessService {
         }
 
         if (adherent != null) {
-            if (!adherent.getPassword().equals(password)) {
+            if (!PasswordStorage.checkPassword(password, adherent.getPassword())) {
                 adherent = null;
-                // TODO SHA256
             }
         }
 
