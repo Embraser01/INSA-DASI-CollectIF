@@ -14,7 +14,7 @@ import fr.insalyon.dasi.collectif.util.MailFactory;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.OptimisticLockException;
+import javax.persistence.RollbackException;
 
 /**
  * @author tbourvon
@@ -198,7 +198,7 @@ public class BusinessService {
                     try {
                         JpaUtil.validerTransaction();
                         retry = false;
-                    } catch (OptimisticLockException e) {
+                    } catch (RollbackException e) {
                         JpaUtil.annulerTransaction();
                         retry = true;
                     }
