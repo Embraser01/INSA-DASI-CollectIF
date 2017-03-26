@@ -5,6 +5,7 @@
  */
 package fr.insalyon.dasi.collectif.business.service;
 
+import com.google.maps.OkHttpRequestHandler;
 import com.google.maps.model.LatLng;
 import fr.insalyon.dasi.collectif.business.exception.*;
 import fr.insalyon.dasi.collectif.business.model.*;
@@ -16,6 +17,8 @@ import fr.insalyon.dasi.collectif.util.PasswordStorage;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.persistence.RollbackException;
 
 
@@ -37,7 +40,9 @@ public class BusinessService {
                 throw new AdherentAlreadyExistsException();
             }
 
+            Logger.getLogger(OkHttpRequestHandler.class.getName()).setLevel(Level.WARNING);
             LatLng latlng = GeoTest.getLatLng(adherent.getAdresse());
+
             if (latlng != null) {
                 adherent.setLatitudeLongitude(latlng.lat, latlng.lng);
             }
