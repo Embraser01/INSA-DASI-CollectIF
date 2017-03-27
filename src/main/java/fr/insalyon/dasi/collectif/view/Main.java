@@ -75,6 +75,7 @@ public class Main {
                     }
                     break;
                 case 2:
+                case 3:
                     String nom = Saisie.readString("Entrez votre nom : ");
                     String prenom = Saisie.readString("Entrez votre prénom : ");
                     String mail = Saisie.readString("Entrez votre mail : ");
@@ -89,22 +90,30 @@ public class Main {
                         passwordConfirmation = Saisie.readString("Re-entrez votre mot de passe :");
                     }
 
-                    currentUser = new Adherent(nom, prenom, mail, adresse, signupPassword);
+                    if (menuSelection == 2) {
+                        currentUser = new Adherent(nom, prenom, mail, adresse, signupPassword);
+                    } else {
+                        currentUser = new Responsable(nom, prenom, mail, adresse, signupPassword, "Responsable");
+                    }
+
                     try {
-                        currentUser = businessService.authSignup(currentUser);
-                        System.out.println("Vous êtes bien inscrits");
-                        if (currentUser instanceof Responsable) {
-                            doResp((Responsable) currentUser, businessService);
-                        } else {
+                        if (menuSelection == 2) {
+                            currentUser = businessService.authSignup(currentUser);
+                            System.out.println("Vous êtes bien inscrits");
                             doAdher(currentUser, businessService);
+                        } else {
+                            currentUser = businessService.creerResponsable((Responsable) currentUser);
+                            System.out.println("Un responsable a bien été créé");
+                            doResp((Responsable) currentUser, businessService);
                         }
+                        
                     } catch (ServiceException e) {
                         System.out.println("Erreur serveur... Re-essayez plus tard");
                     } catch (AdherentAlreadyExistsException e) {
                         System.out.println("Cet utilisateur existe déjà");
                     }
                     break;
-                case 3:
+                case 4:
                     stop();
                     return;
                 default:
@@ -292,9 +301,10 @@ public class Main {
         System.out.println("-------------------------\n");
         System.out.println("1 - Se connecter");
         System.out.println("2 - S'inscrire");
-        System.out.println("3 - Quitter");
+        System.out.println("3 - Créer un responsable");
+        System.out.println("4 - Quitter");
 
-        return Saisie.readInteger("Selection :", 1, 2, 3);
+        return Saisie.readInteger("Selection :", 1, 2, 3, 4);
     }
 
     private static int menuAdherent() {

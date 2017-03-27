@@ -71,5 +71,4 @@ public class PasswordStorage {
             throw new RuntimeException( e );
         }
     }
-
 }

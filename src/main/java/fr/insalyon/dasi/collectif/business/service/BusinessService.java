@@ -290,4 +290,41 @@ public class BusinessService {
 
         JpaUtil.fermerEntityManager();
     }
+
+    public Responsable creerResponsable(Responsable responsable) throws ServiceException, AdherentAlreadyExistsException {
+        JpaUtil.creerEntityManager();
+
+        try {
+            JpaUtil.ouvrirTransaction();
+            if (adherentDAO.findByEmail(responsable.getMail()) != null) {
+                throw new AdherentAlreadyExistsException();
+            }
+
+            Logger.getLogger(OkHttpRequestHandler.class.getName()).setLevel(Level.WARNING);
+            LatLng latlng = GeoTest.getLatLng(responsable.getAdresse());
+
+            if (latlng != null) {
+                responsable.setLatitudeLongitude(latlng.lat, latlng.lng);
+            }
+
+            responsable.setPassword(PasswordStorage.newStorageString(responsable.getPassword()));
+
+            adherentDAO.add(responsable);
+
+            JpaUtil.validerTransaction();
+
+
+        } catch (AdherentAlreadyExistsException e) {
+            // On renvoie cette erreur à la vue
+            throw e;
+        } catch (Exception e) {
+            JpaUtil.annulerTransaction();
+            e.printStackTrace();
+
+            throw new ServiceException();
+        }
+
+        JpaUtil.fermerEntityManager();
+        return responsable;
+    }
 }
