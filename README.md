@@ -7,7 +7,7 @@ More precisely, the app allows its users to create an account, and then post a r
 
 ## Screenshots
 
-This are screenshots from mockups, this repository is only about the services. These can be found [here](/src/main/java/fr/insalyon/dasi/collectif/business/service/)
+These are screenshots from mockups, this repository is only about the services. These can be found [here](/src/main/java/fr/insalyon/dasi/collectif/business/service/)
 
 ![Adhérent - Accueil](/assets/Adhérent%20-%20Accueil.png)
 
